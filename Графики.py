@@ -65,12 +65,12 @@ x_k, y_k = runge_kutta_4(f, x0, y0, b, n)
 
 def analitic(x):
     return 2*x/(1+x**2)
-x_anal = np.linspace(x0, b, 200)
-y_anal = analitic(x_anal)
+x_analitic = np.linspace(x0, b, 200)
+y_analitic = analitic(x_analitic)
 
 
 plt.figure(figsize=(14, 8))
-plt.plot(x_anal, y_anal, 'k-', linewidth=3, alpha=0.8, label='Аналитическое решение: $y = \\frac{2x}{1+x^2}$')
+plt.plot(x_analitic, y_analitic, 'k-', linewidth=3, alpha=0.8, label='Аналитическое решение: $y = \\frac{2x}{1+x^2}$')
 plt.plot(x_i, y_i, 'ro-', linewidth=1.5, markersize=6,
          markerfacecolor='red', markeredgecolor='darkred', alpha=0.8,
          label='Метод Эйлера (n=20)')
@@ -103,5 +103,6 @@ plt.text(0.02, 0.98, info_text,
 
 plt.tight_layout()
 plt.show()
+
 
 
