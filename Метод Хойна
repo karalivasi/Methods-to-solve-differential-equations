@@ -1,0 +1,104 @@
+import matplotlib.pyplot as plt
+
+
+def f(x, y):
+    return (y ** 2 - x * y) / x ** 2
+
+def euler_method(f, x0, y0, b, n):
+    h = (b - x0) / n
+    x = [x0]
+    y = [y0]
+
+    for i in range(n):
+        x_i = x[-1] + h
+        y_i = y[-1] + h * f(x[-1], y[-1])
+        x.append(x_i)
+        y.append(y_i)
+    return x, y
+
+def heun_method(f, x0, y0, b, n):
+    h = (b - x0) / n
+    x = [x0]
+    y = [y0]
+
+    for j in range(n):
+        x_j = x[-1]
+        y_j = y[-1]
+        x_euler, y_euler = euler_method(f, x_j, y_j, x_j + h, 1)
+        y_euler= y_euler[1]
+        k1 = f(x_j, y_j)
+        k2 = f(x_j + h, y_euler)
+        y_j= y_j + h * 0.5 * (k1 + k2)
+        x.append(x_j + h)
+        y.append(y_j)
+
+    return x, y
+
+
+x0 = 0.5
+y0 = 0.8
+b, n = 2.5, 20
+
+x_j, y_j = heun_method(f, x0, y0, b, n)
+
+print('Решение методом Хойна ')
+print('x\ty')
+for i in range(len(x_j)):
+    print(f'{x_j[i]:.2f}\t{y_j[i]:.6f}')
+
+plt.figure(figsize=(12, 7))
+plt.plot(x_j, y_j, 'bo-', linewidth=2, markersize=6,
+    markerfacecolor='red', markeredgecolor='blue',
+             label=f'Решение методом Хойна (n={n})')
+
+
+key_points = [0, 5, 10, 15, 20]
+for i in key_points:
+    if i < len(x_j):
+        plt.annotate(f'({x_j[i]:.2f}, {y_j[i]:.4f})',
+                    (x_j[i], y_j[i]),
+                         textcoords="offset points",
+                         xytext=(0, 12),
+                         ha='center',
+                         fontsize=9,
+                         bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.7))
+
+plt.xlabel('x', fontsize=14, fontweight='bold')
+plt.ylabel('y(x)', fontsize=14, fontweight='bold')
+plt.title(f'Решение ОДУ методом Хойна\n'
+              f'$y\' = \\frac{{y^2 - xy}}{{x^2}}$, $y({x0})={y0}$, $n={n}$',
+              fontsize=16, fontweight='bold')
+
+plt.grid(True, which='both', linestyle='--', linewidth=0.6, alpha=0.7)
+plt.minorticks_on()
+plt.grid(which='minor', alpha=0.2)
+
+
+plt.axhline(y=0, color='black', linewidth=0.8, alpha=0.5)
+plt.axvline(x=0, color='black', linewidth=0.8, alpha=0.5)
+
+
+plt.xlim(x0 - 0.1, b + 0.1)
+plt.ylim(min(y_j) - 0.01, max(y_j) + 0.01)
+
+
+
+
+info_text = f'Параметры:\n'
+info_text += f'• Начальная точка: ({x0}, {y0})\n'
+info_text += f'• Конечная точка: x = {b}\n'
+info_text += f'• Количество шагов: n = {n}\n'
+info_text += f'• Шаг: h = {(b - x0) / n:.4f}\n'
+info_text += f'• y({b}) ≈ {y_j[-1]:.6f}'
+
+plt.text(0.02, 0.98, info_text,transform=plt.gca().transAxes,
+             fontsize=10,
+             verticalalignment='top',
+             bbox=dict(boxstyle="round,pad=0.5", facecolor="lightblue", alpha=0.8))
+
+plt.tight_layout()
+
+plt.savefig('runge_kutta_4th_order_n20.png', dpi=300, bbox_inches='tight')
+print("\nГрафик сохранен как 'heun.png'")
+
+plt.show()
